@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-16 20:42:08 +0900
+# LastModified: 2021-09-17 02:28:23 +0900
 #
 
 
@@ -41,11 +41,11 @@ def main():
              'lower_lip': 4,
              'mouth': 5}
 
-    mydataset = FaceMask(args["data_path"], cropsize=[448, 448])
+    mydataset = FaceMask(args["data_path"])
     mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True)
     mymodel = BiSeNet(len(table)+1)
 
-    train(mydataloader, mymodel, args["device"])
+    train(mydataloader, mymodel, args["device"], args["epochs"])
 
 
 if __name__ == "__main__":
