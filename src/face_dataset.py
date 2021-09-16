@@ -34,6 +34,7 @@ class FaceMask(Dataset):
     def __getitem__(self, idx):
         impth = self.imgs[idx]
         img = Image.open(os.path.join(self.rootpth, 'CelebA-HQ-img', impth))
+        img = img.resize((512, 512), Image.BILINEAR)
         label = Image.open(os.path.join(self.rootpth, 'mask', impth[:-3]+'png'))
         img = self.to_tensor(img)
         label = np.array(label).astype(np.int64)[np.newaxis, :]
