@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-17 16:40:27 +0900
+# LastModified: 2021-09-17 17:23:51 +0900
 #
 
 
@@ -13,7 +13,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, DistributedSampler
 from utils.myparse import get_args
 from models.model import BiSeNet
 from face_dataset import FaceMask
@@ -43,9 +43,11 @@ def main():
              'mouth': 5}
 
     mydataset = FaceMask(args["data_path"])
-    mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True)
+    sampler = DistributedSampler(mydataset)
+    mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True, sampler=sampler)
     mymodel = BiSeNet(len(table)+1)
     mymodel = nn.DataParallel(mymodel)
+    mymodel = nn.parallel.DistributedDataParallel(mymodel)
 
     train(mydataloader, mymodel, args["device"], args["epochs"])
 
