@@ -3,7 +3,7 @@
 #
 # FileName: 	myparse
 # CreatedDate:  2021-09-15 04:06:05 +0900
-# LastModified: 2021-09-17 02:28:57 +0900
+# LastModified: 2021-09-17 17:39:57 +0900
 #
 
 
@@ -19,5 +19,6 @@ def get_args():
     parse.add_argument('--batch_size', type=int, default=8)
     parse.add_argument('--device', default='cpu')
     parse.add_argument('--epochs', type=int, default=500)
+    parse.add_argument('--local_rank', dest='local_rank', type=int, default=-1)
     args = parse.parse_args()
     return vars(args)
