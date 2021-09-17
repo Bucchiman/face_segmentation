@@ -30,13 +30,12 @@ def train(dataloader, net, device, epochs):
     momentum = 0.9
     weight_decay = 5e-4
     lr_start = 1e-2
-    epochs = 500
     power = 0.9
     warmup_steps = 1000
     warmup_start_lr = 1e-5
     optim = Optimizer(model=net, lr0=lr_start, momentum=momentum,
                       wd=weight_decay, warmup_steps=warmup_steps,
-                      warmup_start_lr=warmup_start_lr, epochs=epochs,
+                      warmup_start_lr=warmup_start_lr, max_iter=epochs,
                       power=power)
 
     # train loop
@@ -82,4 +81,4 @@ def train(dataloader, net, device, epochs):
 
                 loss_avg = []
                 st = ed
-    torch.save(net.to('cpu').state_dict(), "finale.pth")
+    torch.save(net.to('cpu').state_dict(), "final.pth")
