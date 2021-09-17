@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-17 02:28:23 +0900
+# LastModified: 2021-09-17 16:40:27 +0900
 #
 
 
@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 import cv2
 import numpy as np
+from torch import nn
 from torch.utils.data import DataLoader
 from utils.myparse import get_args
 from models.model import BiSeNet
@@ -44,6 +45,7 @@ def main():
     mydataset = FaceMask(args["data_path"])
     mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True)
     mymodel = BiSeNet(len(table)+1)
+    mymodel = nn.DataParallel(mymodel)
 
     train(mydataloader, mymodel, args["device"], args["epochs"])
 
