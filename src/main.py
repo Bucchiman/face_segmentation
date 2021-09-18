@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-17 18:07:45 +0900
+# LastModified: 2021-09-18 22:55:25 +0900
 #
 
 
@@ -33,6 +33,11 @@ def main():
 
     dist.init_process_group(backend='nccl',
                             init_method='env://')
+
+    dist.init_process_group(backend='nccl',
+                            init_method='tcp://127.0.0.1:33241',
+                            world_size=torch.cuda.device_count(),
+                            rank=args["local_rank"])
     torch.cuda.set_device(args["local_rank"])
 
     resize_path = os.path.join(args["output_path"], "resize")
@@ -52,7 +57,7 @@ def main():
     sampler = DistributedSampler(mydataset)
     mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True, sampler=sampler)
     mymodel = BiSeNet(len(table)+1)
-    mymodel = nn.parallel.DistributedDataParallel(mymodel, args["local_rank"])
+    mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]])
 
     train(mydataloader, mymodel, args["device"], args["epochs"])
 
