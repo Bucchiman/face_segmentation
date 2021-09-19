@@ -14,11 +14,11 @@ import argparse
 
 def get_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--data_path', default='/Users/iwabuchi/2021/myeyes_lips_segmentation/datas/CelebAMask-HQ')
+    parse.add_argument('--data_path', default='../datas/CelebAMask-HQ')
     parse.add_argument('--output_path', default='../outputs')
-    parse.add_argument('--batch_size', type=int, default=8)
-    parse.add_argument('--device', default='cpu')
-    parse.add_argument('--epochs', type=int, default=500)
+    parse.add_argument('--batch_size', type=int, default=100)
+    parse.add_argument('--device', default='cuda')
+    parse.add_argument('--epochs', type=int, default=1000)
     parse.add_argument('--local_rank', dest='local_rank', type=int, default=-1)
     args = parse.parse_args()
     return vars(args)

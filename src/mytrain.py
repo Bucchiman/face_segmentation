@@ -16,8 +16,7 @@ from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(dataloader, net, device, epochs):
-    net = net.to(device)
+def train(dataloader, net, epochs):
     net.train()
     ignore_idx = -100
     score_thres = 0.7
@@ -33,7 +32,7 @@ def train(dataloader, net, device, epochs):
     power = 0.9
     warmup_steps = 1000
     warmup_start_lr = 1e-5
-    optim = Optimizer(model=net, lr0=lr_start, momentum=momentum,
+    optim = Optimizer(model=net.module, lr0=lr_start, momentum=momentum,
                       wd=weight_decay, warmup_steps=warmup_steps,
                       warmup_start_lr=warmup_start_lr, max_iter=epochs,
                       power=power)
@@ -45,8 +44,8 @@ def train(dataloader, net, device, epochs):
     epoch = 0
     for it in range(epochs):
         for im, lb in dataloader:
-            im = im.to(device)
-            lb = lb.to(device)
+            im = im.to("cuda")
+            lb = lb.to("cuda")
             H, W = im.size()[2:]
             lb = torch.squeeze(lb, 1)
 
@@ -81,4 +80,5 @@ def train(dataloader, net, device, epochs):
 
                 loss_avg = []
                 st = ed
+                print(msg)
     torch.save(net.to('cpu').state_dict(), "final.pth")

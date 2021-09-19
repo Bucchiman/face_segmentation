@@ -30,10 +30,7 @@ def main():
     # 5 mouth
 
     args = get_args()
-
-    dist.init_process_group(backend='nccl',
-                            init_method='env://')
-
+    torch.cuda.set_device(args["local_rank"])
     dist.init_process_group(backend='nccl',
                             init_method='tcp://127.0.0.1:33241',
                             world_size=torch.cuda.device_count(),
@@ -55,11 +52,13 @@ def main():
 
     mydataset = FaceMask(args["data_path"])
     sampler = DistributedSampler(mydataset)
-    mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=True, sampler=sampler)
+    mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=False, sampler=sampler)
     mymodel = BiSeNet(len(table)+1)
-    mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]])
+    mymodel.to(args["device"])
+    mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
+                                                  output_device=args["local_rank"])
 
-    train(mydataloader, mymodel, args["device"], args["epochs"])
+    train(mydataloader, mymodel, args["epochs"])
 
 
 if __name__ == "__main__":
