@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-18 22:55:25 +0900
+# LastModified: 2021-09-19 14:55:35 +0900
 #
 
 
@@ -13,6 +13,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
+from datetime import datetime
 from torch import nn
 from torch import distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
@@ -30,6 +31,10 @@ def main():
     # 5 mouth
 
     args = get_args()
+    nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    output_dir = os.path.join(args["output_path"], nowtime)
+    Path(output_dir).mkdir(exist_ok=False, parents=True)
+
     torch.cuda.set_device(args["local_rank"])
     dist.init_process_group(backend='nccl',
                             init_method='tcp://127.0.0.1:33241',
@@ -58,7 +63,7 @@ def main():
     mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
                                                   output_device=args["local_rank"])
 
-    train(mydataloader, mymodel, args["epochs"])
+    train(output_dir, mydataloader, mymodel, args["epochs"])
 
 
 if __name__ == "__main__":
