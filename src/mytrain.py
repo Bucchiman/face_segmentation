@@ -3,7 +3,7 @@
 #
 # FileName: 	mytrain
 # CreatedDate:  2021-09-16 17:28:20 +0900
-# LastModified: 2021-09-19 14:56:02 +0900
+# LastModified: 2021-09-20 16:34:45 +0900
 #
 
 
@@ -16,7 +16,7 @@ from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(output_path, dataloader, net, epochs):
+def train(dist, output_path, dataloader, net, epochs):
     net.train()
     ignore_idx = -100
     score_thres = 0.7
@@ -81,4 +81,7 @@ def train(output_path, dataloader, net, epochs):
                 loss_avg = []
                 st = ed
                 print(msg)
-    torch.save(net.to('cpu').state_dict(), os.path.join(output_path, "final.pth"))
+
+    state = net.module.state_dict() if hasattr(net, 'module') else net.state_dict()
+    if dist.get_rank() == 0:
+        torch.save(state, os.path.join(output_path, "final.pth"))
