@@ -16,11 +16,11 @@ from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(output_path, dataloader, net, epochs):
+def train(output_path, dataloader, net, epochs, batch_size):
     net.train()
     ignore_idx = -100
     score_thres = 0.7
-    n_min = 1024*1024
+    n_min = 448*448
     LossP = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss2 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss3 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
@@ -81,4 +81,5 @@ def train(output_path, dataloader, net, epochs):
                 loss_avg = []
                 st = ed
                 print(msg)
+        print("{}/{}".format(it, epochs))
     torch.save(net.to('cpu').state_dict(), os.path.join(output_path, "final.pth"))

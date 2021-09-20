@@ -29,7 +29,7 @@ class Optimizer(object):
             lr = self.warmup_start_lr*(self.warmup_factor**self.it)
         else:
             factor = (1-(self.it-self.warmup_steps) / (self.max_iter-self.warmup_steps))**self.power
-            lr = self.lr0 * factor
+            lr = self.lr0 * factor 
         return lr
 
     def step(self):

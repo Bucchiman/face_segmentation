@@ -33,7 +33,7 @@ def main():
     args = get_args()
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     output_dir = os.path.join(args["output_path"], nowtime)
-    Path(output_dir).mkdir(exist_ok=False, parents=True)
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
 
     resize_path = os.path.join(output_dir, "resize")
     mask_path = os.path.join(output_dir, "mask")
@@ -63,7 +63,7 @@ def main():
     mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
                                                   output_device=args["local_rank"])
 
-    train(output_dir, mydataloader, mymodel, args["epochs"])
+    train(output_dir, mydataloader, mymodel, args["epochs"], args["batch_size"])
 
 
 if __name__ == "__main__":
