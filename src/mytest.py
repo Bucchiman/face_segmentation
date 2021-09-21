@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-09-20 16:26:36 +0900
+# LastModified: 2021-09-20 17:33:56 +0900
 #
 
 
@@ -40,7 +40,7 @@ def get_parsing(device, n_classes, model_path, image_path, net):
 
     with torch.no_grad():
         img = Image.open(image_path)
-        image = img.resize((512, 512), Image.BILINEAR)
+        image = img.resize((1080, 1080), Image.BILINEAR)
         img = to_tensor(image)
         img = torch.unsqueeze(img, 0)
         img = img.to(device)
@@ -58,7 +58,7 @@ def evaluate(data_path, output_path, model_path, n_classes=6, device="cpu"):
 
     net = BiSeNet(n_classes=n_classes)
     net = net.to(device)
-    net.load_state_dict(torch.load(model_path))
+    net.load_state_dict(torch.load(model_path, map_location=device))
     resize_path = os.path.join(output_path, "resize")
     mask_path = os.path.join(output_path, "mask")
     roi_path = os.path.join(output_path, "roi")
@@ -82,8 +82,8 @@ def evaluate(data_path, output_path, model_path, n_classes=6, device="cpu"):
 
 def main():
     evaluate("/Users/iwabuchi/2021/myeyes_lips_segmentation/mydatas/IMG_0272",
-             "../outputs/2021_09_20_03_00_42",
-             "../outputs/2021_09_20_03_00_42/final.pth")
+             "../outputs/2021_09_20_17_07_53",
+             "../outputs/2021_09_20_17_07_53/final.pth")
 
 if __name__ == "__main__":
     main()
