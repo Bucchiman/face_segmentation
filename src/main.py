@@ -63,7 +63,7 @@ def main():
     mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
                                                   output_device=args["local_rank"])
 
-    train(output_dir, mydataloader, mymodel, args["epochs"], args["batch_size"])
+    train(dist, output_dir, mydataloader, mymodel, args["epochs"])
 
 
 if __name__ == "__main__":
