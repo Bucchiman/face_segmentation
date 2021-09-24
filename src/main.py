@@ -48,14 +48,15 @@ def main():
              'mouth': 5}
     cropsize = [1024, 1024]
 
-    mydataset = FaceMask(rootpth=args["data_path"], mode="train", cropsize=cropsize)
-    sampler = DistributedSampler(mydataset)
-    mydataloader = DataLoader(mydataset, args["batch_size"],
-                              shuffle=False, sampler=sampler,
-                              pin_memory=True, drop_last=True)
-    mymodel = BiSeNet(len(table)+1)
+    dataset = FaceMask(data_path=args["data_path"], mode="train", cropsize=cropsize)
+    sampler = DistributedSampler(dataset)
+    dataloader = DataLoader(dataset, args["batch_size"],
+                            shuffle=False, sampler=sampler,
+                            pin_memory=True, drop_last=True)
+    net = BiSeNet(len(table)+1)
 
-    train(dist, sampler, output_dir, mydataloader, mymodel, args["epochs"], args["batch_size"], cropsize)
+    train(dist, sampler, output_dir, dataloader, args["device"],
+          args["local_rank"], net, args["epochs"], args["batch_size"], cropsize)
 
 
 if __name__ == "__main__":
