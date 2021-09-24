@@ -16,7 +16,7 @@ from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(dist, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
+def train(dist, sampler, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
     net.train()
     ignore_idx = -100
     score_thres = 0.7
@@ -45,7 +45,16 @@ def train(dist, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
     diter = iter(dataloader)
     epoch = 0
     for it in range(epochs):
-        imgs, labels = next(diter)
+        try:
+            imgs, labels = next(diter)
+            if not imgs.size()[0] == n_img_per_gpu:
+                raise StopIteration
+        except StopIteration:
+            epoch += 1
+            sampler.set_epoch(epoch)
+            diter = iter(dataloader)
+            imgs, labels = next(diter)
+
         imgs = imgs.to("cuda")
         labels = labels.to("cuda")
         H, W = imgs.size()[2:]
@@ -83,7 +92,7 @@ def train(dist, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
             loss_avg = []
             st = ed
             print(msg)
-        print("{}/{}".format(it, epochs))
+#        print("{}/{}".format(it, epochs))
 
     state = net.module.state_dict() if hasattr(net, 'module') else net.state_dict()
     if dist.get_rank() == 0:

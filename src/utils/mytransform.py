@@ -56,8 +56,8 @@ class HorizontalFlip(object):
             flip_lb = np.array(label)
             flip_lb[label == 1] = 2
             flip_lb[label == 2] = 1
-            flip_lb[label == 3] = 4
-            flip_lb[label == 4] = 3
+#            flip_lb[label == 3] = 4
+#            flip_lb[label == 4] = 3
             flip_lb = Image.fromarray(flip_lb)
             return dict(img=img.transpose(Image.FLIP_LEFT_RIGHT),
                         label=flip_lb.transpose(Image.FLIP_LEFT_RIGHT))
