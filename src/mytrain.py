@@ -3,7 +3,7 @@
 #
 # FileName: 	mytrain
 # CreatedDate:  2021-09-16 17:28:20 +0900
-# LastModified: 2021-09-20 16:34:45 +0900
+# LastModified: 2021-09-24 14:16:29 +0900
 #
 
 
@@ -16,11 +16,12 @@ from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(dist, output_path, dataloader, net, epochs):
+def train(dist, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
     net.train()
     ignore_idx = -100
     score_thres = 0.7
-    n_min = 448*448
+    n_min = n_img_per_gpu*cropsize[0]*cropsize[1] // 16
+
     LossP = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss2 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss3 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
@@ -41,46 +42,47 @@ def train(dist, output_path, dataloader, net, epochs):
     msg_iter = 50
     loss_avg = []
     st = glob_st = time.time()
+    diter = iter(dataloader)
     epoch = 0
     for it in range(epochs):
-        for im, lb in dataloader:
-            im = im.to("cuda")
-            lb = lb.to("cuda")
-            H, W = im.size()[2:]
-            lb = torch.squeeze(lb, 1)
+        imgs, labels = next(diter)
+        imgs = imgs.to("cuda")
+        labels = labels.to("cuda")
+        H, W = imgs.size()[2:]
+        labels = torch.squeeze(labels, 1)
 
-            optim.zero_grad()
-            out, out16, out32 = net(im)
+        optim.zero_grad()
+        out, out16, out32 = net(imgs)
 
-            lossp = LossP(out, lb)
-            loss2 = Loss2(out16, lb)
-            loss3 = Loss3(out32, lb)
-            loss = lossp + loss2 + loss3
-            loss.backward()
-            optim.step()
+        lossp = LossP(out, labels)
+        loss2 = Loss2(out16, labels)
+        loss3 = Loss3(out32, labels)
+        loss = lossp+loss2+loss3
+        loss.backward()
+        optim.step()
 
-            loss_avg.append(loss.item())
+        loss_avg.append(loss.item())
 
-            #  print training log message
-            if (it+1) % msg_iter == 0:
-                loss_avg = sum(loss_avg) / len(loss_avg)
-                lr = optim.lr
-                ed = time.time()
-                t_intv, glob_t_intv = ed - st, ed - glob_st
-                eta = int((epochs - it) * (glob_t_intv / it))
-                eta = str(datetime.timedelta(seconds=eta))
-                msg = ', '.join(['it: {it}/{max_it}', 'lr: {lr:4f}',
-                                 'loss: {loss:.4f}', 'eta: {eta}',
-                                 'time: {time:.4f}']).format(it=it+1,
-                                                             max_it=epochs,
-                                                             lr=lr,
-                                                             loss=loss_avg,
-                                                             time=t_intv,
-                                                             eta=eta)
+        #  print training log message
+        if (it+1) % msg_iter == 0:
+            loss_avg = sum(loss_avg) / len(loss_avg)
+            lr = optim.lr
+            ed = time.time()
+            t_intv, glob_t_intv = ed - st, ed - glob_st
+            eta = int((epochs - it) * (glob_t_intv / it))
+            eta = str(datetime.timedelta(seconds=eta))
+            msg = ', '.join(['it: {it}/{max_it}', 'lr: {lr:4f}',
+                             'loss: {loss:.4f}', 'eta: {eta}',
+                             'time: {time:.4f}']).format(it=it+1,
+                                                         max_it=epochs,
+                                                         lr=lr,
+                                                         loss=loss_avg,
+                                                         time=t_intv,
+                                                         eta=eta)
 
-                loss_avg = []
-                st = ed
-                print(msg)
+            loss_avg = []
+            st = ed
+            print(msg)
         print("{}/{}".format(it, epochs))
 
     state = net.module.state_dict() if hasattr(net, 'module') else net.state_dict()

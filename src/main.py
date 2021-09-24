@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-19 14:59:11 +0900
+# LastModified: 2021-09-23 15:46:18 +0900
 #
 
 
@@ -47,7 +47,6 @@ def main():
                             init_method='tcp://127.0.0.1:33241',
                             world_size=torch.cuda.device_count(),
                             rank=args["local_rank"])
-    torch.cuda.set_device(args["local_rank"])
 
     table = {'left_eye': 1,
              'right_eye': 2,
@@ -57,7 +56,9 @@ def main():
 
     mydataset = FaceMask(args["data_path"])
     sampler = DistributedSampler(mydataset)
-    mydataloader = DataLoader(mydataset, args["batch_size"], shuffle=False, sampler=sampler)
+    mydataloader = DataLoader(mydataset, args["batch_size"],
+                              shuffle=False, sampler=sampler,
+                              pin_memory=True, drop_last=True)
     mymodel = BiSeNet(len(table)+1)
     mymodel.to(args["device"])
     mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
