@@ -3,12 +3,11 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-09-24 18:01:17 +0900
+# LastModified: 2021-09-24 18:21:45 +0900
 #
 
 
 import os
-import sys
 from pathlib import Path
 from models.model import BiSeNet
 import torch
@@ -16,6 +15,18 @@ from torchvision import transforms
 from PIL import Image
 import numpy as np
 import cv2
+import argparse
+
+
+def get_args():
+    parse = argparse.ArgumentParser()
+    parse.add_argument('--data_path', type=str, default='../datas/IMG_0272')
+    parse.add_argument('--output_path', type=str)
+    parse.add_argument('--model_name', type=str, default='final.pth')
+    parse.add_argument('--device', default='cuda')
+    parse.add_argument('--n_classes', type=int, default=6)
+    args = parse.parse_args()
+    return vars(args)
 
 
 def mask(image, parsing, parts):
@@ -32,7 +43,7 @@ def roi(img_mask, img):
     return img_roi
 
 
-def get_parsing(device, n_classes, model_path, image_path, net):
+def get_parsing(device, n_classes, image_path, net):
     net.eval()
 
     to_tensor = transforms.Compose([transforms.ToTensor(),
@@ -50,31 +61,32 @@ def get_parsing(device, n_classes, model_path, image_path, net):
         return parsing
 
 
-def evaluate(data_path, output_path, model_path, n_classes=6, device="cpu"):
+def evaluate(args):
     table = {'left_eye': 1,
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
              'mouth': 5}
 
-    net = BiSeNet(n_classes=n_classes)
-    net = net.to(device)
-    net.load_state_dict(torch.load(model_path, map_location=device))
-    resize_path = os.path.join(output_path, "resize")
-    mask_path = os.path.join(output_path, "mask")
-    roi_path = os.path.join(output_path, "roi")
+    net = BiSeNet(n_classes=args["n_classes"])
+    net = net.to(args["device"])
+    net.load_state_dict(torch.load(os.path.join(args["output_path"], args["model_name"]),
+                                   map_location=args["device"]))
+    resize_path = os.path.join(args["output_path"], "resize")
+    mask_path = os.path.join(args["output_path"], "mask")
+    roi_path = os.path.join(args["output_path"], "roi")
     Path(resize_path).mkdir(parents=True, exist_ok=True)
     Path(mask_path).mkdir(parents=True, exist_ok=True)
     Path(roi_path).mkdir(parents=True, exist_ok=True)
 
-    for img_name in os.listdir(data_path):
-        parsing = get_parsing(device, n_classes, model_path,
-                              os.path.join(data_path, img_name), net)
+    for img_name in os.listdir(args["data_path"]):
+        parsing = get_parsing(args["device"], args["n_classes"],
+                              os.path.join(args["data_path"], img_name), net)
         parts = [table['left_eye'], table['right_eye'],
                  table['upper_lip'], table['lower_lip'],
                  table['mouth']]
-        img = cv2.resize(cv2.imread(os.path.join(data_path, img_name)), (1080, 1080))
-        img_bg = np.zeros((1080, 1080))
+        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
+        img_bg = np.zeros((1024, 1024))
 
         img_mask = mask(img_bg, parsing, parts).astype(np.uint8)
         img_mask = cv2.cvtColor(img_mask, cv2.COLOR_GRAY2BGR)
@@ -86,9 +98,9 @@ def evaluate(data_path, output_path, model_path, n_classes=6, device="cpu"):
 
 
 def main():
-    evaluate("/Users/iwabuchi/2021/myeyes_lips_segmentation/mydatas/IMG_0272",
-             "../outputs/2021_09_20_17_07_53",
-             "../outputs/2021_09_20_17_07_53/final.pth")
+    args = get_args()
+    evaluate(args)
+
 
 if __name__ == "__main__":
     main()

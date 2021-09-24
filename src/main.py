@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-24 18:02:02 +0900
+# LastModified: 2021-09-24 18:12:50 +0900
 #
 
 
@@ -19,8 +19,8 @@ from torch import distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
 from utils.myparse import get_args
 from models.model import BiSeNet
-from face_dataset import FaceMask
-from mytrain import train
+from dataset import FaceMask
+from train import train
 
 
 def main():
@@ -54,9 +54,6 @@ def main():
                               shuffle=False, sampler=sampler,
                               pin_memory=True, drop_last=True)
     mymodel = BiSeNet(len(table)+1)
-    mymodel.to(args["device"])
-    mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
-                                                  output_device=args["local_rank"])
 
     train(dist, sampler, output_dir, mydataloader, mymodel, args["epochs"], args["batch_size"], cropsize)
 

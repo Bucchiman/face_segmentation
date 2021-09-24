@@ -3,12 +3,10 @@
 #
 # FileName: 	loss
 # CreatedDate:  2021-09-16 17:22:24 +0900
-# LastModified: 2021-09-16 17:25:27 +0900
+# LastModified: 2021-09-24 18:22:05 +0900
 #
 
 
-import os
-import sys
 from torch import nn
 from torch.nn import functional as F
 import torch

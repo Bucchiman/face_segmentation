@@ -3,7 +3,7 @@
 #
 # FileName: 	preprocess_datas
 # CreatedDate:  2021-09-15 23:15:21 +0900
-# LastModified: 2021-09-16 19:38:33 +0900
+# LastModified: 2021-09-24 18:23:23 +0900
 #
 
 
@@ -13,14 +13,14 @@ import cv2
 import numpy as np
 from PIL import Image
 
-face_data = '/Users/iwabuchi/2021/myeyes_lips_segmentation/datas/CelebAMask-HQ/CelebA-HQ-img'
-face_sep_mask = '/Users/iwabuchi/2021/myeyes_lips_segmentation/datas/CelebAMask-HQ/CelebAMask-HQ-mask-anno'
-mask_path = '/Users/iwabuchi/2021/myeyes_lips_segmentation/datas/CelebAMask-HQ/mask'
+face_data = '../../datas/CelebAMask-HQ/CelebA-HQ-img'
+face_sep_mask = '../../datas/CelebAMask-HQ/CelebAMask-HQ-mask-anno'
+mask_path = '../../datas/CelebAMask-HQ/mask'
 counter = 0
 total = 0
 for i in range(15):
 
-    atts = ['l_eye', 'r_eye', 'mouth', 'u_lip', 'l_lip']
+    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'mouth']
 
     for j in range(i*2000, (i+1)*2000):
 

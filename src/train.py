@@ -3,20 +3,25 @@
 #
 # FileName: 	mytrain
 # CreatedDate:  2021-09-16 17:28:20 +0900
-# LastModified: 2021-09-24 14:16:29 +0900
+# LastModified: 2021-09-24 18:12:31 +0900
 #
 
 
 import os
-import sys
 import torch
+from torch.nn.parallel import DistributedDataParallel
 import time
 import datetime
 from utils.loss import OhemCELoss
 from utils.optimizer import Optimizer
 
 
-def train(dist, sampler, output_path, dataloader, net, epochs, n_img_per_gpu, cropsize):
+def train(dist, sampler, output_path, dataloader, device,
+          local_rank, net, epochs, n_img_per_gpu, cropsize):
+
+    net.to(device)
+    net = DistributedDataParallel(net, device_ids=[local_rank],
+                                  output_device=local_rank)
     net.train()
     ignore_idx = -100
     score_thres = 0.7
