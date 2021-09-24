@@ -53,8 +53,9 @@ def main():
              'upper_lip': 3,
              'lower_lip': 4,
              'mouth': 5}
+    cropsize = [1024, 1024]
 
-    mydataset = FaceMask(args["data_path"])
+    mydataset = FaceMask(rootpth=args["data_path"], mode="train", cropsize=cropsize)
     sampler = DistributedSampler(mydataset)
     mydataloader = DataLoader(mydataset, args["batch_size"],
                               shuffle=False, sampler=sampler,
@@ -64,7 +65,7 @@ def main():
     mymodel = nn.parallel.DistributedDataParallel(mymodel, device_ids=[args["local_rank"]],
                                                   output_device=args["local_rank"])
 
-    train(dist, output_dir, mydataloader, mymodel, args["epochs"])
+    train(dist, output_dir, mydataloader, mymodel, args["epochs"], args["batch_size"], cropsize)
 
 
 if __name__ == "__main__":

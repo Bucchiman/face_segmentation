@@ -13,7 +13,7 @@ import cv2
 
 
 class FaceMask(Dataset):
-    def __init__(self, rootpth, mode='train', cropsize, *args, **kwargs):
+    def __init__(self, rootpth, mode='train', cropsize=[1024, 1024], *args, **kwargs):
         super(FaceMask, self).__init__(*args, **kwargs)
         assert mode in ('train', 'val', 'test')
         self.mode = mode
