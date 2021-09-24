@@ -3,12 +3,13 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-09-20 17:33:56 +0900
+# LastModified: 2021-09-24 18:01:17 +0900
 #
 
 
 import os
 import sys
+from pathlib import Path
 from models.model import BiSeNet
 import torch
 from torchvision import transforms
@@ -62,6 +63,10 @@ def evaluate(data_path, output_path, model_path, n_classes=6, device="cpu"):
     resize_path = os.path.join(output_path, "resize")
     mask_path = os.path.join(output_path, "mask")
     roi_path = os.path.join(output_path, "roi")
+    Path(resize_path).mkdir(parents=True, exist_ok=True)
+    Path(mask_path).mkdir(parents=True, exist_ok=True)
+    Path(roi_path).mkdir(parents=True, exist_ok=True)
+
     for img_name in os.listdir(data_path):
         parsing = get_parsing(device, n_classes, model_path,
                               os.path.join(data_path, img_name), net)

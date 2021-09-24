@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-23 15:46:18 +0900
+# LastModified: 2021-09-24 18:02:02 +0900
 #
 
 
@@ -34,13 +34,6 @@ def main():
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     output_dir = os.path.join(args["output_path"], nowtime)
     Path(output_dir).mkdir(exist_ok=True, parents=True)
-
-    resize_path = os.path.join(output_dir, "resize")
-    mask_path = os.path.join(output_dir, "mask")
-    roi_path = os.path.join(output_dir, "roi")
-    Path(resize_path).mkdir(parents=True, exist_ok=True)
-    Path(mask_path).mkdir(parents=True, exist_ok=True)
-    Path(roi_path).mkdir(parents=True, exist_ok=True)
 
     torch.cuda.set_device(args["local_rank"])
     dist.init_process_group(backend='nccl',
