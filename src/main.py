@@ -18,22 +18,27 @@ from torch import nn
 from torch import distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
 from utils.myparse import get_args
+from utils.config import Config
 from models.model import BiSeNet
 from dataset import FaceMask
 from train import train
 
 
 def main():
-    # 1  left eye
-    # 2  right eye
-    # 3 upper lip
-    # 4 lower lip
-    # 5 mouth
+    # 1 left eye
+    # 2 right eye
+    # 3 lower lip
+    # 4 upper lip
+    # 5 left iris
+    # 6 right iris 
 
     args = get_args()
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     output_dir = os.path.join(args["output_path"], nowtime)
     Path(output_dir).mkdir(exist_ok=True, parents=True)
+    cfg = Config(args["config_path"], output_dir)
+    cfg.save_config(args)
+    
 
     torch.cuda.set_device(args["local_rank"])
     dist.init_process_group(backend='nccl',
@@ -45,7 +50,8 @@ def main():
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
-             'mouth': 5}
+             'left_iris': 5,
+             'right_iris': 6}
     cropsize = [1024, 1024]
 
     dataset = FaceMask(data_path=args["data_path"], mode="train", cropsize=cropsize)
