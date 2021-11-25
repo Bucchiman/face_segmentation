@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-09-24 18:12:50 +0900
+# LastModified: 2021-11-25 09:23:17 +0900
 #
 
 
@@ -29,8 +29,9 @@ def main():
     # 2 right eye
     # 3 lower lip
     # 4 upper lip
-    # 5 left iris
-    # 6 right iris 
+    # 5 mouth
+    # 6 left iris
+    # 7 right iris 
 
     args = get_args()
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -50,8 +51,9 @@ def main():
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
-             'left_iris': 5,
-             'right_iris': 6}
+             'mouth': 5,
+             'left_iris': 6,
+             'right_iris': 7}
     cropsize = [1024, 1024]
 
     dataset = FaceMask(data_path=args["data_path"], mode="train", cropsize=cropsize)
