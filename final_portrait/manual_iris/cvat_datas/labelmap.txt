@@ -1,0 +1,4 @@
+# label:color_rgb:parts:actions
+background:0,0,0::
+left_iris:122,171,20::
+right_iris:255,0,124::

@@ -3,3 +3,7 @@ outputs
 __pycache__
 nohup.out
 sample
+*.pth
+.ipynb_checkpoints
+.virtual_documents
+.DS_Store
