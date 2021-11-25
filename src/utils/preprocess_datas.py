@@ -13,14 +13,17 @@ import cv2
 import numpy as np
 from PIL import Image
 
-face_data = '../../datas/CelebAMask-HQ/CelebA-HQ-img'
-face_sep_mask = '../../datas/CelebAMask-HQ/CelebAMask-HQ-mask-anno'
-mask_path = '../../datas/CelebAMask-HQ/mask'
+#face_data = '../../datas/CelebAMask-HQ/CelebA-HQ-img'
+#face_sep_mask = '../../datas/CelebAMask-HQ/CelebAMask-HQ-mask-anno'
+#mask_path = '../../datas/CelebAMask-HQ/mask'
+face_data = '../../datas/sample_datas/CelebA-HQ-img'
+face_sep_mask = '../../datas/sample_datas/CelebAMask-HQ-mask-anno'
+mask_path = '../../datas/sample_datas/mask'
 counter = 0
 total = 0
-for i in range(15):
+for i in range(5):
 
-    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'mouth']
+    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'l_iris', 'r_iris']
 
     for j in range(i*2000, (i+1)*2000):
 

@@ -16,6 +16,7 @@ def get_args():
     parse = argparse.ArgumentParser()
     parse.add_argument('--data_path', default='../datas/CelebAMask-HQ')
     parse.add_argument('--output_path', default='../outputs')
+    parse.add_argument('--config_path', default='../config')
     parse.add_argument('--batch_size', type=int, default=100)
     parse.add_argument('--device', default='cuda')
     parse.add_argument('--epochs', type=int, default=1000)
