@@ -3,7 +3,7 @@
 #
 # FileName: 	main
 # CreatedDate:  2021-09-15 04:09:09 +0900
-# LastModified: 2021-11-25 09:23:17 +0900
+# LastModified: 2021-11-26 16:17:52 +0900
 #
 
 
@@ -34,8 +34,18 @@ def main():
     # 7 right iris 
 
     args = get_args()
+
+    table = {'left_eye': 1,
+             'right_eye': 2,
+             'upper_lip': 3,
+             'lower_lip': 4,
+             'mouth': 5,
+             'left_iris': 6,
+             'right_iris': 7}
+    args['table'] = table
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     output_dir = os.path.join(args["output_path"], nowtime)
+    args['output_dir'] = output_dir
     Path(output_dir).mkdir(exist_ok=True, parents=True)
     cfg = Config(args["config_path"], output_dir)
     cfg.save_config(args)
@@ -47,13 +57,6 @@ def main():
                             world_size=torch.cuda.device_count(),
                             rank=args["local_rank"])
 
-    table = {'left_eye': 1,
-             'right_eye': 2,
-             'upper_lip': 3,
-             'lower_lip': 4,
-             'mouth': 5,
-             'left_iris': 6,
-             'right_iris': 7}
     cropsize = [1024, 1024]
 
     dataset = FaceMask(data_path=args["data_path"], mode="train", cropsize=cropsize)
