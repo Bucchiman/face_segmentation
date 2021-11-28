@@ -3,7 +3,7 @@
 #
 # FileName: 	iris_plus
 # CreatedDate:  2021-11-18 04:51:41 +0900
-# LastModified: 2021-11-25 08:57:23 +0900
+# LastModified: 2021-11-27 06:45:51 +0900
 #
 
 
@@ -19,10 +19,10 @@ def main():
     mask = one_mask.copy()
     for i in range(two_mask.shape[0]):
         for j in range(two_mask.shape[1]):
-            if two_mask[i, j] == 5:
-                mask[i, j] = 5
-            elif two_mask[i, j] == 6:
+            if two_mask[i, j] == 6:
                 mask[i, j] = 6
+            elif two_mask[i, j] == 7:
+                mask[i, j] = 7
     cv2.imwrite("iris_mask/eyes_lips_iris_mask.jpg", mask.astype(np.uint8))
 
 

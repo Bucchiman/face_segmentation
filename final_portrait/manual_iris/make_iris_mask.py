@@ -3,7 +3,7 @@
 #
 # FileName: 	preprocess
 # CreatedDate:  2021-11-18 03:52:33 +0900
-# LastModified: 2021-11-25 08:56:14 +0900
+# LastModified: 2021-11-27 06:45:31 +0900
 #
 
 
@@ -22,8 +22,8 @@ def main():
     img_mask_left = np.zeros((W, H))
     img_mask_right = np.zeros((W, H))
 
-    img_mask_left = np.where(img_anno == label["left_iris"], 5, 0)
-    img_mask_right = np.where(img_anno == label["right_iris"], 6, 0)
+    img_mask_left = np.where(img_anno == label["left_iris"], 6, 0)
+    img_mask_right = np.where(img_anno == label["right_iris"], 7, 0)
 
     img_mask = img_mask_left + img_mask_right
     cv2.imwrite('./iris_mask/iris_mask.jpg', img_mask[..., 0].astype(np.uint8))
