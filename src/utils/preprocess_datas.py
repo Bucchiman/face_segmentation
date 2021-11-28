@@ -21,13 +21,14 @@ face_sep_mask = '../../datas/sample_datas/CelebAMask-HQ-mask-anno'
 mask_path = '../../datas/sample_datas/mask'
 counter = 0
 total = 0
-for i in range(5):
+for i in range(1):
 
-    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'l_iris', 'r_iris']
+    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'mouth', 'l_iris', 'r_iris']
+    H = W = 512
 
     for j in range(i*2000, (i+1)*2000):
 
-        mask = np.zeros((512, 512))
+        mask = np.zeros((H, W))
 
         for l, att in enumerate(atts, 1):
             total += 1
@@ -36,10 +37,11 @@ for i in range(5):
 
             if os.path.exists(path):
                 counter += 1
-                sep_mask = np.array(Image.open(path).convert('P'))
+#                sep_mask = np.array(Image.open(path).convert('P'))
+                sep_mask = cv2.imread(path, 0) 
 
-                mask[sep_mask == 225] = l
-        cv2.imwrite('{}/{}.png'.format(mask_path, j), mask)
+                mask = np.where(sep_mask == 255, l, mask)
+        cv2.imwrite('{}/{}.png'.format(mask_path, j), mask.astype(np.uint8))
 
 
 print(counter, total)
