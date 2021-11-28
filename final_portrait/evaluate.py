@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-11-25 08:15:46 +0900
+# LastModified: 2021-11-29 02:23:29 +0900
 #
 
 
@@ -24,7 +24,7 @@ def get_args():
     parse.add_argument('--output_path', type=str)
     parse.add_argument('--model_name', type=str, default='final.pth')
     parse.add_argument('--device', default='cuda')
-    parse.add_argument('--n_classes', type=int, default=7)
+    parse.add_argument('--n_classes', type=int, default=8)
     args = parse.parse_args()
     return vars(args)
 
@@ -66,8 +66,8 @@ def evaluate(args):
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
-             'left_iris': 5,
-             'right_iris': 6}
+             'left_iris': 6,
+             'right_iris': 7}
 
     net = BiSeNet(n_classes=args["n_classes"])
     net = net.to(args["device"])
@@ -83,6 +83,7 @@ def evaluate(args):
     for img_name in os.listdir(args["data_path"]):
         parsing = get_parsing(args["device"], args["n_classes"],
                               os.path.join(args["data_path"], img_name), net)
+#        cv2.imwrite("parsing.png", parsing.astype(np.uint8))
         parts = [table['left_eye'], table['right_eye'],
                  table['upper_lip'], table['lower_lip'],
                  table['left_iris'], table['right_iris']]
