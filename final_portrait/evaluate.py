@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-11-29 02:23:29 +0900
+# LastModified: 2021-12-01 03:37:14 +0900
 #
 
 
@@ -58,7 +58,7 @@ def get_parsing(device, n_classes, image_path, net):
         img = img.to(device)
         out = net(img)[0]
         parsing = out.squeeze(0).cpu().numpy().argmax(0)
-        return parsing
+        return parsing.astype(np.uint8)
 
 
 def evaluate(args):
@@ -83,7 +83,7 @@ def evaluate(args):
     for img_name in os.listdir(args["data_path"]):
         parsing = get_parsing(args["device"], args["n_classes"],
                               os.path.join(args["data_path"], img_name), net)
-#        cv2.imwrite("parsing.png", parsing.astype(np.uint8))
+        cv2.imwrite("parsing.png", parsing.astype(np.uint8))
         parts = [table['left_eye'], table['right_eye'],
                  table['upper_lip'], table['lower_lip'],
                  table['left_iris'], table['right_iris']]
