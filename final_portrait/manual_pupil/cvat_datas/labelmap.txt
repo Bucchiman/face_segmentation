@@ -1,0 +1,6 @@
+# label:color_rgb:parts:actions
+background:0,0,0::
+left_iris:170,240,209::
+left_pupil:184,61,245::
+right_iris:245,147,49::
+right_pupil:250,50,83::
