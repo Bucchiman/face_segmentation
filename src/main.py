@@ -32,6 +32,8 @@ def main():
     # 5 mouth
     # 6 left iris
     # 7 right iris 
+    # 8 left pupil
+    # 9 right pupil
 
     args = get_args()
 
@@ -41,7 +43,10 @@ def main():
              'lower_lip': 4,
              'mouth': 5,
              'left_iris': 6,
-             'right_iris': 7}
+             'right_iris': 7,
+             'left_pupil': 8,
+             'right_pupil': 9}
+
     args['table'] = table
     nowtime = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     output_dir = os.path.join(args["output_path"], nowtime)
@@ -49,7 +54,7 @@ def main():
     Path(output_dir).mkdir(exist_ok=True, parents=True)
     cfg = Config(args["config_path"], output_dir)
     cfg.save_config(args)
-    
+
 
     torch.cuda.set_device(args["local_rank"])
     dist.init_process_group(backend='nccl',

@@ -23,7 +23,7 @@ counter = 0
 total = 0
 for i in range(1):
 
-    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'mouth', 'l_iris', 'r_iris']
+    atts = ['l_eye', 'r_eye', 'u_lip', 'l_lip', 'mouth', 'l_iris', 'r_iris', 'l_pupil', 'r_pupil']
     H = W = 512
 
     for j in range(i*2000, (i+1)*2000):
