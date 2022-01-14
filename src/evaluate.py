@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-09-24 18:21:45 +0900
+# LastModified: 2022-01-14 13:40:32 +0900
 #
 
 
@@ -24,7 +24,7 @@ def get_args():
     parse.add_argument('--output_path', type=str)
     parse.add_argument('--model_name', type=str, default='final.pth')
     parse.add_argument('--device', default='cuda')
-    parse.add_argument('--n_classes', type=int, default=6)
+    parse.add_argument('--n_classes', type=int, default=10)
     args = parse.parse_args()
     return vars(args)
 
@@ -66,7 +66,11 @@ def evaluate(args):
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
-             'mouth': 5}
+             'mouth': 5,
+             'left_iris': 6,
+             'right_iris': 7,
+             'left_pupil': 8,
+             'right_pupil': 9}
 
     net = BiSeNet(n_classes=args["n_classes"])
     net = net.to(args["device"])
@@ -84,9 +88,9 @@ def evaluate(args):
                               os.path.join(args["data_path"], img_name), net)
         parts = [table['left_eye'], table['right_eye'],
                  table['upper_lip'], table['lower_lip'],
-                 table['mouth']]
-        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
-        img_bg = np.zeros((1024, 1024))
+                 table['mouth'], table['left_pupil'], table['right_pupil']]
+        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1080, 1080))
+        img_bg = np.zeros((1080, 1080))
 
         img_mask = mask(img_bg, parsing, parts).astype(np.uint8)
         img_mask = cv2.cvtColor(img_mask, cv2.COLOR_GRAY2BGR)
