@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2022-01-14 13:40:32 +0900
+# LastModified: 2022-02-02 22:31:32 +0900
 #
 
 
@@ -88,7 +88,9 @@ def evaluate(args):
                               os.path.join(args["data_path"], img_name), net)
         parts = [table['left_eye'], table['right_eye'],
                  table['upper_lip'], table['lower_lip'],
-                 table['mouth'], table['left_pupil'], table['right_pupil']]
+#                 table['mouth'],
+#                 table['left_iris'], table['right_iris'],
+                 table['left_pupil'], table['right_pupil']]
         img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1080, 1080))
         img_bg = np.zeros((1080, 1080))
 
