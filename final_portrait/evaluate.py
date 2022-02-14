@@ -3,7 +3,7 @@
 #
 # FileName: 	mytest
 # CreatedDate:  2021-09-20 15:23:39 +0900
-# LastModified: 2021-12-01 03:37:14 +0900
+# LastModified: 2022-02-07 16:19:28 +0900
 #
 
 
@@ -66,8 +66,11 @@ def evaluate(args):
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
+             'mouth': 5,
              'left_iris': 6,
-             'right_iris': 7}
+             'right_iris': 7,
+             'left_pupil': 8,
+             'right_pupil': 9}
 
     net = BiSeNet(n_classes=args["n_classes"])
     net = net.to(args["device"])

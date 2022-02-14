@@ -3,12 +3,11 @@
 #
 # FileName: 	parsing2colorchange
 # CreatedDate:  2021-12-01 03:44:46 +0900
-# LastModified: 2021-12-01 04:13:43 +0900
+# LastModified: 2022-02-14 13:44:58 +0900
 #
 
 
 import os
-from pathlib import Path
 from models.model import BiSeNet
 import torch
 from torchvision import transforms
@@ -20,11 +19,11 @@ import argparse
 
 def get_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--data_path', type=str, default='../datas/IMG_0272')
+    parse.add_argument('--data_path', type=str, default='../datas/one_IMG_0392_imgs_rate_30')
     parse.add_argument('--output_path', type=str)
     parse.add_argument('--model_name', type=str, default='final.pth')
     parse.add_argument('--device', default='cuda')
-    parse.add_argument('--n_classes', type=int, default=8)
+    parse.add_argument('--n_classes', type=int, default=10)
     args = parse.parse_args()
     return vars(args)
 
@@ -62,12 +61,17 @@ def get_parsing(device, n_classes, image_path, net):
 
 
 def evaluate(args):
+
+    _, data_name = os.path.split(args["data_path"])
     table = {'left_eye': 1,
              'right_eye': 2,
              'upper_lip': 3,
              'lower_lip': 4,
+             'mouth': 5,
              'left_iris': 6,
-             'right_iris': 7}
+             'right_iris': 7,
+             'left_pupil': 8,
+             'right_pupil': 9}
 
     color_iris = np.array([0, 70, 255])
     color_lips = np.array([255, 79, 140])
@@ -76,7 +80,7 @@ def evaluate(args):
     net = net.to(args["device"])
     net.load_state_dict(torch.load(os.path.join(args["output_path"], args["model_name"]),
                                    map_location=args["device"]))
-    parsing_path = os.path.join(args["output_path"], "parsing")
+    parsing_path = os.path.join(args["output_path"], data_name, "parsing")
     os.makedirs(parsing_path, exist_ok=True)
 
     for img_name in os.listdir(args["data_path"]):
@@ -89,8 +93,6 @@ def evaluate(args):
                  table['left_iris'], table['right_iris']]
         img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
 #        final_img = np.zeros((1024, 1024))
-
-
 
 
 def main():
