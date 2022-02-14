@@ -3,7 +3,7 @@
 #
 # FileName: 	parsing2colorchange
 # CreatedDate:  2021-12-01 03:44:46 +0900
-# LastModified: 2022-02-14 13:44:58 +0900
+# LastModified: 2022-02-14 16:58:38 +0900
 #
 
 
@@ -15,6 +15,7 @@ from PIL import Image
 import numpy as np
 import cv2
 import argparse
+import matplotlib.pyplot as plt
 
 
 def get_args():
@@ -86,13 +87,33 @@ def evaluate(args):
     for img_name in os.listdir(args["data_path"]):
         parsing = get_parsing(args["device"], args["n_classes"],
                               os.path.join(args["data_path"], img_name), net)
-        print(parsing.shape)
-        cv2.imwrite("parsing_{}.png".format(img_name.rstrip(".jpeg")), parsing.astype(np.uint8))
-        parts = [table['left_eye'], table['right_eye'],
-                 table['upper_lip'], table['lower_lip'],
-                 table['left_iris'], table['right_iris']]
-        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
-#        final_img = np.zeros((1024, 1024))
+#        print(parsing.shape, np.unique(parsing))
+#        cv2.imwrite("parsing_{}.png".format(img_name.rstrip(".jpeg")), parsing.astype(np.uint8))
+#        parts = [table['left_eye'], table['right_eye'],
+#                 table['upper_lip'], table['lower_lip'],
+#                 table['left_iris'], table['right_iris']]
+#        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
+        final_img = np.zeros((3, 1024, 1024))
+        for h in range(1024):
+            for w in range(1024):
+                if parsing[h, w] == table["left_eye"] or parsing[h, w] == table["right_eye"]:
+                    final_img[:, h, w] = 255
+                elif parsing[h, w] == table["upper_lip"] or parsing[h, w] == table["lower_lip"]:
+                    final_img[0, h, w] = 255
+                    final_img[1, h, w] = 79
+                    final_img[2, h, w] = 140
+                elif parsing[h, w] == table["left_iris"] or parsing[h, w] == table["right_iris"]:
+                    final_img[0, h, w] = 0
+                    final_img[1, h, w] = 70
+                    final_img[2, h, w] = 255
+                elif parsing[h, w] == table["left_pupil"] or parsing[h, w] == table["right_pupil"]:
+                    final_img[:, h, w] = 255
+                else:
+                    pass
+#        plt.imshow(np.array(final_img).astype(np.uint8))
+
+        cv2.imwrite("hoge.jpg", final_img.astype(np.uint8))
+        break
 
 
 def main():
