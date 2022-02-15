@@ -3,7 +3,7 @@
 #
 # FileName: 	parsing2colorchange
 # CreatedDate:  2021-12-01 03:44:46 +0900
-# LastModified: 2022-02-14 17:11:55 +0900
+# LastModified: 2022-02-16 03:05:30 +0900
 #
 
 
@@ -16,6 +16,7 @@ import numpy as np
 import cv2
 import argparse
 import matplotlib.pyplot as plt
+import json
 
 
 def get_args():
@@ -25,6 +26,7 @@ def get_args():
     parse.add_argument('--model_name', type=str, default='final.pth')
     parse.add_argument('--device', default='cuda')
     parse.add_argument('--n_classes', type=int, default=10)
+    parse.add_argument('--color_version', type=str, default='./color_version/version_01.json')
     args = parse.parse_args()
     return vars(args)
 
@@ -74,8 +76,8 @@ def evaluate(args):
              'left_pupil': 8,
              'right_pupil': 9}
 
-    color_iris = np.array([0, 70, 255])
-    color_lips = np.array([255, 79, 140])
+    with open(args["color_version"], "r") as fp:
+        colors = json.load(fp)
 
     net = BiSeNet(n_classes=args["n_classes"])
     net = net.to(args["device"])
@@ -94,20 +96,23 @@ def evaluate(args):
 #                 table['left_iris'], table['right_iris']]
 #        img = cv2.resize(cv2.imread(os.path.join(args["data_path"], img_name)), (1024, 1024))
         final_img = np.zeros((1024, 1024, 3))
+        final_img[..., :] = colors["background"]
         for h in range(1024):
             for w in range(1024):
                 if parsing[h, w] == table["left_eye"] or parsing[h, w] == table["right_eye"]:
                     final_img[h, w, :] = 255
                 elif parsing[h, w] == table["upper_lip"] or parsing[h, w] == table["lower_lip"]:
-                    final_img[h, w, 0] = 255
-                    final_img[h, w, 1] = 79
-                    final_img[h, w, 2] = 140
+                    final_img[h, w, 0] = colors["lips"][0]
+                    final_img[h, w, 1] = colors["lips"][1]
+                    final_img[h, w, 2] = colors["lips"][2]
                 elif parsing[h, w] == table["left_iris"] or parsing[h, w] == table["right_iris"]:
-                    final_img[h, w, 0] = 0
-                    final_img[h, w, 1] = 70
-                    final_img[h, w, 2] = 255
+                    final_img[h, w, 0] = colors["iris"][0]
+                    final_img[h, w, 1] = colors["iris"][1]
+                    final_img[h, w, 2] = colors["iris"][2]
                 elif parsing[h, w] == table["left_pupil"] or parsing[h, w] == table["right_pupil"]:
                     final_img[h, w, :] = 255
+                elif parsing[h, w] == table["mouth"]:
+                    final_img[h, w, :] = 0
                 else:
                     pass
 
